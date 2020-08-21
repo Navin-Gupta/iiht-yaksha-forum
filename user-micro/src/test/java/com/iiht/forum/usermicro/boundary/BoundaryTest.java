@@ -37,7 +37,7 @@ public class BoundaryTest {
 	
 	
 	@Test
-	public void testLoginBoundary() throws Exception {
+	public void userTestLoginBoundary() throws Exception {
 		
 		when(userService.login("dummy@mail.com", "abc"))
 		.thenReturn(null);

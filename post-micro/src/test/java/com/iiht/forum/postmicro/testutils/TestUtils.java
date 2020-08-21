@@ -1,5 +1,4 @@
-package com.iiht.forum.usermicro.testutils;
-
+package com.iiht.forum.postmicro.testutils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,9 +15,9 @@ public class TestUtils {
 		public static File boundaryTestFile;
 		public static File exceptionTestFile;
 		static {
-			removeLineFromFile("../output_revised.txt", "user");
-			removeLineFromFile("../output_boundary_revised.txt", "user");
-			removeLineFromFile("../output_exception_revised.txt", "user");
+			removeLineFromFile("../output_revised.txt", "post");
+			removeLineFromFile("../output_boundary_revised.txt", "post");
+			removeLineFromFile("../output_exception_revised.txt", "post");
 			
 			businessTestFile = new File("../output_revised.txt");
 			//businessTestFile.delete();

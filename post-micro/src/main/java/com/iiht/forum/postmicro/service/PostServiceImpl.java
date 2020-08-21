@@ -16,25 +16,32 @@ import com.iiht.forum.postmicro.dto.PostDetailDto;
 import com.iiht.forum.postmicro.dto.PostDetailListDto;
 import com.iiht.forum.postmicro.dto.PostDto;
 import com.iiht.forum.postmicro.dto.UserDetailDto;
+import com.iiht.forum.postmicro.feignproxy.UserProxy;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @Service
 public class PostServiceImpl implements PostService {
 
 	
-	private static String USER_URL = "http://localhost:9091/api/user";
-	private RestTemplate restTemplate;
+	
+	// private static String USER_URL = "http://localhost:9091/api/user";
+	// private RestTemplate restTemplate;
 	private CommentService commentService;
 	private PostRepository repository;
+	private UserProxy proxy;
 	public PostServiceImpl(PostRepository repository, 
-						   RestTemplate restTemplate, 
-						   CommentService commentService) {
+						   // RestTemplate restTemplate, 
+						   CommentService commentService,
+						   UserProxy proxy) {
 		// TODO Auto-generated constructor stub
 		this.repository = repository;
-		this.restTemplate = restTemplate;
+		// this.restTemplate = restTemplate;
 		this.commentService = commentService;
+		this.proxy = proxy;
 	}
 	
 	@Override
+	
 	public PostDetailDto addPost(PostDto post, String userId) {
 		// TODO Auto-generated method stub
 		Post postDb = new Post(null, 
@@ -45,7 +52,8 @@ public class PostServiceImpl implements PostService {
 							  LocalDateTime.now(), 
 							  0);
 		postDb = this.repository.save(postDb);
-		UserDetailDto userDetail = this.restTemplate.getForObject(USER_URL + "/get/" + userId, UserDetailDto.class);
+		// UserDetailDto userDetail = this.restTemplate.getForObject(USER_URL + "/get/" + userId, UserDetailDto.class);
+		UserDetailDto userDetail = this.proxy.getUserDetails(userId).getBody();
 		List<CommentDetailDto> comments = this.commentService.getComments(postDb.getId());
 		
 		//PostDetailDto postDetail = new PostDetailDto(postId, title, tags, post, postedByUser, postedOn, likes, comments);
@@ -61,13 +69,16 @@ public class PostServiceImpl implements PostService {
 		
 		return postDetail;
 	}
+	
+	
 
 	@Override
 	public PostDetailDto getPost(String postId) {
 		// TODO Auto-generated method stub
 		Post postDb = this.repository.findById(postId).orElse(null);
 		if(postDb != null) {
-			UserDetailDto userDetail = this.restTemplate.getForObject(USER_URL + "/get/" + postDb.getUserId(), UserDetailDto.class);
+			// UserDetailDto userDetail = this.restTemplate.getForObject(USER_URL + "/get/" + postDb.getUserId(), UserDetailDto.class);
+			UserDetailDto userDetail = this.proxy.getUserDetails(postDb.getUserId()).getBody();
 			List<CommentDetailDto> comments = this.commentService.getComments(postDb.getId());
 			
 			//PostDetailDto postDetail = new PostDetailDto(postId, title, tags, post, postedByUser, postedOn, likes, comments);
@@ -101,7 +112,8 @@ public class PostServiceImpl implements PostService {
 		
 		List<PostDetailDto> postDetails = new ArrayList<PostDetailDto>();
 		for(Post postDb : posts) {
-			UserDetailDto userDetail = this.restTemplate.getForObject(USER_URL + "/get/" + userId, UserDetailDto.class);
+			// UserDetailDto userDetail = this.restTemplate.getForObject(USER_URL + "/get/" + userId, UserDetailDto.class);
+			UserDetailDto userDetail = this.proxy.getUserDetails(postDb.getUserId()).getBody();
 			List<CommentDetailDto> comments = this.commentService.getComments(postDb.getId());
 			
 			//PostDetailDto postDetail = new PostDetailDto(postId, title, tags, post, postedByUser, postedOn, likes, comments);

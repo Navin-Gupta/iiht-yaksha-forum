@@ -34,7 +34,7 @@ public class ExceptionTest {
 		
 	
 	@Test
-	public void testGetUserDetailsFailed() throws Exception {
+	public void userTestGetUserDetailsFailed() throws Exception {
 		when(userService.getUserDetails("2"))
 		.thenReturn(null);
 		
@@ -50,3 +50,16 @@ public class ExceptionTest {
 					exceptionTestFile);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -39,7 +39,7 @@ public class UserControllerTest {
 		
 	
 	@Test
-	public void testLoginSuccess() throws Exception {
+	public void userTestLoginSuccess() throws Exception {
 		
 		when(userService.login("dummy@mail.com", "abcdefg"))
 		.thenReturn(MasterData.getUserDetailDto());
@@ -58,7 +58,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void testLoginFailed() throws Exception {
+	public void userTestLoginFailed() throws Exception {
 		
 		when(userService.login("dummy@mail.com", "abcdefg"))
 		.thenReturn(null);
@@ -75,7 +75,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void testGetUserDetailsSuccess() throws Exception {
+	public void userTestGetUserDetailsSuccess() throws Exception {
 		when(userService.getUserDetails("1"))
 		.thenReturn(MasterData.getUserDetailDto());
 		

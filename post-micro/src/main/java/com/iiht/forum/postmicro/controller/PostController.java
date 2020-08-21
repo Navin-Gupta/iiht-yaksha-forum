@@ -2,6 +2,9 @@ package com.iiht.forum.postmicro.controller;
 
 
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,10 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iiht.forum.postmicro.dto.CommentDetailDto;
 import com.iiht.forum.postmicro.dto.PostDetailDto;
 import com.iiht.forum.postmicro.dto.PostDetailListDto;
 import com.iiht.forum.postmicro.dto.PostDto;
+import com.iiht.forum.postmicro.dto.UserDetailDto;
 import com.iiht.forum.postmicro.service.PostService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RestController
 @CrossOrigin("*")
@@ -29,12 +35,28 @@ public class PostController {
 	}
 	
 	@PostMapping("/add/{userId}")
+	@HystrixCommand(fallbackMethod = "defaultAdd")
 	public ResponseEntity<PostDetailDto> addPost(@PathVariable("userId") String userId, @RequestBody PostDto post){
 		PostDetailDto postDetail = this.postService.addPost(post, userId);
 		ResponseEntity<PostDetailDto> response =
 				new ResponseEntity<PostDetailDto>(postDetail, HttpStatus.OK);
 		
 		return response;
+	}
+	public ResponseEntity<PostDetailDto> defaultAdd(String userId,  PostDto post) {
+		PostDetailDto postDetail = new PostDetailDto("", 
+													 "", 
+													 "", 
+													 "", 
+													 new UserDetailDto("", "", "", "", "", ""), 
+													 LocalDateTime.now(), 
+													 0, 
+													 new ArrayList<CommentDetailDto>());
+		ResponseEntity<PostDetailDto> response =
+				new ResponseEntity<PostDetailDto>(postDetail, HttpStatus.OK);
+		
+		return response;
+		
 	}
 	
 	@GetMapping("/get/{postId}")
